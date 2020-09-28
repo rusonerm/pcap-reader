@@ -34,6 +34,7 @@ def packet_create(ether_pkt):
         layer = ip_pkt[UDP]
     else:
         layer = ip_pkt[ICMP]
+        pkt.resp_ip_bytes = layer
 
     pkt.src_port = layer.sport
     pkt.dst_port = layer.dport
@@ -48,11 +49,14 @@ if __name__ == '__main__':
 
     for (pkt_data, pkt_metadata,) in RawPcapReader(PCAP_FILE):
         ether_pkt = Ether(pkt_data)
+
         if 'type' not in ether_pkt.fields:
             continue
 
         if ether_pkt.type != 0x0800:
             continue
+
+        print(pkt_metadata)
 
         pkt = packet_create(ether_pkt)
 
